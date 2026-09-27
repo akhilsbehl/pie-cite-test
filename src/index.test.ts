@@ -18,7 +18,7 @@ describe('citationPassed', () => {
   it('passes only direct, complete, context-fit support', () => {
     expect(citationPassed({
       support: { type: 'choice', value: 'supported' },
-      sole_source: { type: 'noul', value: true },
+      sole_source: { type: 'noul', noul: 0.9 },
       fit: { type: 'choice', value: 'fits' },
     })).toBe(true)
   })
@@ -26,7 +26,7 @@ describe('citationPassed', () => {
   it('fails partial support', () => {
     expect(citationPassed({
       support: { type: 'choice', value: 'partial' },
-      sole_source: { type: 'noul', value: true },
+      sole_source: { type: 'noul', noul: 0.9 },
       fit: { type: 'choice', value: 'fits' },
     })).toBe(false)
   })
@@ -34,7 +34,7 @@ describe('citationPassed', () => {
   it('fails a mismatched source', () => {
     expect(citationPassed({
       support: { type: 'choice', value: 'supported' },
-      sole_source: { type: 'noul', value: true },
+      sole_source: { type: 'noul', noul: 0.9 },
       fit: { type: 'choice', value: 'wrong' },
     })).toBe(false)
   })

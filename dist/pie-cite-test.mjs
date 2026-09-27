@@ -3,7 +3,7 @@ import { Type } from "typebox";
 //#region src/index.ts
 const JINA_READER_ENDPOINT = "https://r.jina.ai/";
 const JEV_ENDPOINT = "https://openrouter.ai/api/alpha/decisions";
-const JEV_MODEL = "typesafe/jev-latest";
+const JEV_MODEL = "~typesafe/jev-latest";
 const DEFAULT_TIMEOUT_MS = 9e4;
 const MAX_SOURCE_CHARS = 6e4;
 const MAX_CITATIONS = 20;
@@ -127,14 +127,15 @@ function decisionValue(answer) {
 		"answer",
 		"choice",
 		"label",
-		"result"
+		"result",
+		"noul"
 	]) if (key in answer) return answer[key];
 }
 function citationPassed(answers) {
 	const support = decisionValue(answers.support);
 	const soleSource = decisionValue(answers.sole_source);
 	const fit = decisionValue(answers.fit);
-	return support === "supported" && soleSource === true && fit !== "wrong";
+	return support === "supported" && typeof soleSource === "number" && soleSource >= .5 && fit !== "wrong";
 }
 async function testCitations(citations, signal) {
 	const results = [];

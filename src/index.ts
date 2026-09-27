@@ -4,7 +4,7 @@ import { Type, type Static } from 'typebox'
 
 const JINA_READER_ENDPOINT = 'https://r.jina.ai/'
 const JEV_ENDPOINT = 'https://openrouter.ai/api/alpha/decisions'
-const JEV_MODEL = 'typesafe/jev-latest'
+const JEV_MODEL = '~typesafe/jev-latest'
 const DEFAULT_TIMEOUT_MS = 90_000
 const MAX_SOURCE_CHARS = 60_000
 const MAX_CITATIONS = 20
@@ -133,7 +133,7 @@ async function askJev(state: string, questions: Record<string, unknown>, signal?
 
 function decisionValue(answer: JevAnswer | undefined): unknown {
   if (!answer) return undefined
-  for (const key of ['value', 'answer', 'choice', 'label', 'result']) {
+  for (const key of ['value', 'answer', 'choice', 'label', 'result', 'noul']) {
     if (key in answer) return answer[key]
   }
   return undefined
@@ -143,7 +143,7 @@ export function citationPassed(answers: Record<string, JevAnswer>): boolean {
   const support = decisionValue(answers.support)
   const soleSource = decisionValue(answers.sole_source)
   const fit = decisionValue(answers.fit)
-  return support === 'supported' && soleSource === true && fit !== 'wrong'
+  return support === 'supported' && typeof soleSource === 'number' && soleSource >= 0.5 && fit !== 'wrong'
 }
 
 export async function testCitations(citations: Citation[], signal?: AbortSignal): Promise<CiteTestResult> {
